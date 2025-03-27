@@ -157,3 +157,109 @@ Secara keseluruhan, Postman sangat membantu dalam proyek saya saat ini, terutama
 
 #### Reflection Publisher-3
 
+Pertanyaan 1: Observer Pattern has two variations: Push model (publisher pushes data to subscribers) and Pull model (subscribers pull data from publisher). In this tutorial case, which variation of Observer Pattern that we use?
+
+Jawaban:
+
+Berdasarkan kode yang diberikan, tutorial ini menggunakan variasi Push Model dari Observer Pattern.
+Dalam implementasi ini, kelas NotificationService bertindak sebagai publisher, dan metode notify() mendorong (push) data notifikasi ke semua subscriber yang terdaftar untuk tipe produk tertentu. Hal ini dapat dilihat dalam implementasi metode notify() di src/service/notification.rs.
+
+Beberapa karakteristik push model yang terlihat:
+
+Publisher (NotificationService) secara aktif mengirimkan data notifikasi ke semua subscriber
+Data notifikasi lengkap didorong ke subscriber tanpa subscriber perlu meminta
+Setiap kali ada perubahan pada produk (create, delete, publish), notifikasi otomatis didorong ke subscriber yang sesuai
+Metode update() pada Subscriber langsung menerima payload penuh dari publisher
+
+Berbeda dengan pull model di mana subscriber harus secara eksplisit meminta data dari publisher, pada push model ini, publisher menginisiasi pengiriman data secara otomatis kepada semua subscriber yang terdaftar.
+
+Pertanyaan 2:What are the advantages and disadvantages of using the other variation of Observer Pattern for this tutorial case? (example: if you answer Q1 with Push, then imagine if we used Pull)
+
+Jawaban:
+
+Keuntungan Pull Model:
+
+
+a. Kontrol Subscriber Lebih Baik
+
+- Subscriber memiliki kendali penuh kapan mereka ingin mengambil data
+
+- Mengurangi beban server karena tidak mengirim data secara otomatis
+
+- Subscriber dapat memutuskan sendiri kapan mereka ingin memperbarui informasi
+
+
+b. Efisiensi Bandwidth
+
+- Hanya mengambil data ketika diperlukan
+
+- Mengurangi jumlah transfer data yang tidak perlu
+
+- Menurunkan beban jaringan, terutama jika subscriber tidak selalu membutuhkan update terbaru
+
+
+c. Keamanan dan Privasi
+
+- Subscriber dapat memilih waktu dan frekuensi pengambilan data
+
+- Mengurangi risiko pengiriman data yang tidak diinginkan
+
+Kekurangan Pull Model:
+
+
+a. Kompleksitas Implementasi
+
+- Memerlukan mekanisme polling atau webhook tambahan
+
+- Subscriber harus secara aktif melakukan request untuk mendapatkan data
+
+- Meningkatkan kompleksitas kode di sisi subscriber
+
+
+b. Keterlambatan Informasi
+
+- Informasi mungkin tidak segera tersedia
+
+- Jika subscriber jarang melakukan pull, mereka bisa ketinggalan update penting
+
+- Tidak real-time seperti push model
+
+
+c. Overhead Komputasi
+
+- Setiap subscriber harus melakukan request berkali-kali untuk memeriksa update
+
+- Meningkatkan beban komputasi di sisi klien
+
+- Membutuhkan mekanisme manajemen state untuk melacak update terakhir
+
+
+Pertanyaan 3: Explain what will happen to the program if we decide to not use multi-threading in the notification process.
+
+
+Jawaban:
+
+Jika kita memutuskan untuk tidak menggunakan multi-threading dalam proses notifikasi, akan terjadi beberapa konsekuensi penting pada program Bambang Shop:
+
+a. Blocking Proses Utama
+
+Dalam implementasi saat ini, metode notify() menggunakan thread::spawn() untuk mengirim notifikasi secara asynchronous. Tanpa multi-threading, proses pengiriman notifikasi akan berjalan secara synchronous. Artinya:
+
+- Setiap panggilan notify() akan menunggu hingga semua notifikasi terkirim
+
+- Proses utama akan terblokir sampai semua subscriber menerima notifikasi
+
+- Kinerja aplikasi akan sangat terganggu, terutama jika ada banyak subscriber
+
+
+b. Potensi Masalah Performa
+
+- Jika salah satu subscriber lambat merespons atau mengalami kesalahan
+
+- Proses pengiriman notifikasi akan menghentikan seluruh eksekusi program
+
+- Waktu respons aplikasi akan menjadi sangat lambat
+
+
+Jadi, dapat disimpulkan bahwa tidak menggunakan multi-threading akan sangat merugikan kinerja aplikasi Bambang Shop. Proses notifikasi akan menjadi bottleneck utama, membuat aplikasi tidak responsif dan tidak efisien dalam menangani update produk.
+Oleh karena itu, penggunaan multi-threading dalam metode notify() adalah keputusan arsitektur yang baik untuk menjaga performa dan keandalan sistem notifikasi.
