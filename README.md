@@ -78,6 +78,41 @@ This is the place for you to write reflections:
 
 #### Reflection Publisher-1
 
+Pertanyaan 1: In the Observer pattern diagram explained by the Head First Design Pattern book, Subscriber is defined as an interface. Explain based on your understanding of Observer design patterns, do we still need an interface (or trait in Rust) in this BambangShop case, or a single Model struct is enough?
+
+Jawaban:
+
+Dalam implementasi BambangShop, kita tidak memiliki variasi dalam cara subscriber berlangganan atau menerima notifikasi. Semua subscriber memiliki struktur data yang sama dan hanya disimpan dalam DashMap berdasarkan jenis produk. Jika hanya ada satu cara subscriber berinteraksi, maka satu model struct sudah cukup. Tidak ada keuntungan langsung dari menggunakan trait karena tidak ada perilaku yang perlu dibedakan di antara berbagai jenis subscriber.
+
+Jika nantinya kita ingin memiliki berbagai jenis subscriber, seperti:
+
+1. EmailSubscriber yang dapat menerima notifikasi via email.
+
+2. WebhookSubscriber yang menerima notifikasi via HTTP request.
+
+3. MobilePushSubscriber untuk aplikasi mobile.
+
+Maka penggunaan trait akan lebih masuk akal agar setiap jenis subscriber bisa mengimplementasikan metode yang berbeda dalam menerima notifikasi.
+
+
+Jadi, dapat disimpulkan bahwa dalam implementasi BambangShop saat ini, menggunakan satu struct tanpa trait sudah cukup, karena kita hanya memiliki satu jenis subscriber dengan pola penyimpanan yang tetap. Namun, jika nanti ingin menambahkan berbagai mekanisme subscription dengan perilaku berbeda, maka trait akan sangat berguna untuk mendukung fleksibilitas dan ekstensibilitas sistem.
+
+Pertanyaan 2: id in Program and url in Subscriber is intended to be unique. Explain based on your understanding, is using Vec (list) sufficient or using DashMap (map/dictionary) like we currently use is necessary for this case?
+
+Jawaban:
+
+Dalam implementasi BambangShop, penggunaan DashMap lebih tepat dibandingkan Vec karena memastikan bahwa id pada Product dan url pada Subscriber tetap unik dengan efisiensi yang lebih tinggi. Jika kita menggunakan Vec, kita harus melakukan pencarian manual dengan kompleksitas O(n) untuk memastikan tidak ada duplikasi sebelum menambahkan data baru, yang menjadi kurang efisien seiring bertambahnya jumlah produk atau subscriber. Dengan DashMap, pencarian dan penyisipan data dapat dilakukan dalam waktu O(1), sehingga lebih cepat dan optimal, terutama dalam skenario dengan banyak data atau akses bersamaan dari beberapa thread. Selain itu, struktur DashMap<String, DashMap<String, Subscriber>> pada SubscriberRepository juga memungkinkan pengelompokan berdasarkan product_type secara lebih terstruktur dan efisien. Oleh karena itu, penggunaan DashMap memang diperlukan dalam kasus ini untuk memastikan integritas data dan meningkatkan performa sistem dibandingkan hanya menggunakan Vec.
+
+Pertanyaan 3: When programming using Rust, we are enforced by rigorous compiler constraints to make a thread-safe program. In the case of the List of Subscribers (SUBSCRIBERS) static variable, we used the DashMap external library for thread safe HashMap. Explain based on your understanding of design patterns, do we still need DashMap or we can implement Singleton pattern instead?
+
+Jawaban:
+
+Dalam konteks BambangShop, penggunaan DashMap tetap diperlukan meskipun kita bisa menerapkan Singleton pattern. Singleton pattern bertujuan untuk memastikan bahwa hanya ada satu instance dari suatu objek dalam aplikasi, yang dalam hal ini bisa digunakan untuk mengelola daftar subscriber secara global. Namun, Singleton sendiri tidak secara otomatis menjamin thread safety, terutama ketika banyak thread ingin membaca dan menulis data secara bersamaan. Rust memiliki aturan kepemilikan yang ketat, tetapi tanpa DashMap, kita perlu menggunakan Mutex<HashMap<>> atau RwLock<HashMap<>> untuk menjaga konsistensi data saat terjadi akses bersamaan, yang bisa menimbulkan bottleneck karena mekanisme locking.
+
+Sebaliknya, DashMap dirancang sebagai thread-safe concurrent HashMap, yang memungkinkan akses paralel tanpa perlu manual locking seperti pada Mutex atau RwLock. Dengan menggunakan DashMap, kita mendapatkan efisiensi yang lebih tinggi dalam pencarian dan pembaruan data tanpa mengorbankan keamanan thread. Oleh karena itu, dalam skenario seperti ini, menggunakan DashMap lebih praktis dan efisien dibandingkan hanya menerapkan Singleton pattern, karena kita tetap membutuhkan mekanisme konkuren untuk menangani banyak subscriber yang berlangganan produk secara bersamaan.
+
 #### Reflection Publisher-2
 
+
 #### Reflection Publisher-3
+
