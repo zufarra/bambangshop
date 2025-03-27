@@ -113,6 +113,47 @@ Sebaliknya, DashMap dirancang sebagai thread-safe concurrent HashMap, yang memun
 
 #### Reflection Publisher-2
 
+Pertanyaan 1: In the Model-View Controller (MVC) compound pattern, there is no “Service” and “Repository”. Model in MVC covers both data storage and business logic. Explain based on your understanding of design principles, why we need to separate “Service” and “Repository” from a Model?
+
+Jawaban:
+
+Dalam desain perangkat lunak, pemisahan antara Service dan Repository dari Model dalam pola arsitektur Model-View-Controller (MVC) didasarkan pada prinsip desain yang bertujuan untuk meningkatkan keterbacaan, skalabilitas, dan pemeliharaan kode.
+
+Pertama, pemisahan ini mengikuti prinsip Single Responsibility Principle (SRP) dari SOLID, yang menyatakan bahwa setiap komponen harus memiliki satu tanggung jawab spesifik. Jika Model mencakup logika bisnis (Service) dan akses data (Repository), maka kode menjadi sulit dipelihara dan diperluas.
+
+Kedua, pemisahan ini mendukung Separation of Concerns (SoC), yang memastikan bahwa setiap lapisan dalam arsitektur memiliki tanggung jawab yang jelas. Repository berfokus pada interaksi dengan database, Service menangani logika bisnis, dan Model hanya merepresentasikan struktur data. Dengan ini, perubahan dalam akses data tidak akan berdampak pada logika bisnis, dan sebaliknya.
+
+Ketiga, dari perspektif Testability, pemisahan Service dan Repository mempermudah pengujian unit. Dengan menggunakan lapisan Service, kita dapat melakukan pengujian tanpa bergantung langsung pada database. Ini memungkinkan penggunaan mocking atau stubbing dalam pengujian untuk meningkatkan efisiensi dan kecepatan pengujian.
+
+Keempat, dalam proyek besar, pemisahan ini mendukung Scalability dan Maintainability. Jika ada perubahan dalam logika bisnis, kita cukup memperbarui Service tanpa mengubah akses data. Demikian pula, jika kita mengganti database atau menggunakan ORM yang berbeda, kita hanya perlu memodifikasi Repository tanpa memengaruhi lapisan lainnya.
+
+Kesimpulannya, meskipun MVC secara tradisional tidak memiliki Service dan Repository, pemisahan ini memberikan struktur yang lebih modular, meningkatkan keterbacaan, dan memungkinkan pengembangan yang lebih fleksibel dan teruji dengan baik.
+
+Pertanyaan 2: What happens if we only use the Model? Explain your imagination on how the interactions between each model (Program, Subscriber, Notification) affect the code complexity for each model?
+
+
+Jawaban:
+
+Jika kita hanya menggunakan Model tanpa memisahkan Service dan Repository, seluruh tanggung jawab dalam pengelolaan data dan logika bisnis akan berada di dalam satu struktur. Hal ini menyebabkan kode menjadi sulit dikelola karena setiap perubahan dalam penyimpanan data atau aturan bisnis akan berdampak langsung pada Model. Misalnya, jika Program menangani daftar Subscriber sekaligus mengatur pengiriman Notification, maka perubahan kecil dalam cara penyimpanan atau pengiriman notifikasi dapat memengaruhi banyak bagian dalam kode.
+
+Selain itu, ketergantungan antar-Model akan meningkat. Model Program harus mengetahui detail bagaimana Subscriber disimpan dan bagaimana Notification dikirim, yang menyebabkan kode menjadi kurang fleksibel. Jika suatu saat penyimpanan data Subscriber harus dipindahkan dari memori ke database, maka banyak bagian dalam Model Program yang harus diubah. Hal ini juga membuat pengujian lebih sulit karena sulit untuk mengisolasi bagian kode tertentu tanpa mempengaruhi bagian lainnya.
+
+Dari segi skalabilitas, tanpa pemisahan yang jelas, menambahkan fitur baru seperti segmentasi Subscriber atau aturan notifikasi yang lebih kompleks akan membuat Model semakin besar dan sulit dipahami. Dengan memisahkan Service untuk menangani logika bisnis dan Repository untuk menangani penyimpanan data, kita dapat memastikan bahwa setiap komponen memiliki tanggung jawab yang jelas, lebih mudah diuji, serta lebih fleksibel dalam menghadapi perubahan.
+
+Pertanyaan 3: 
+
+Have you explored more about Postman? Tell us how this tool helps you to test your current work. You might want to also list which features in Postman you are interested in or feel like it is helpful to help your Group Project or any of your future software engineering projects.
+
+Jawaban:
+
+Ya, saya telah mengeksplorasi lebih lanjut tentang Postman, dan alat ini sangat membantu dalam menguji API yang saya gunakan dalam proyek saat ini, khususnya dalam menangani subscriber dan notification. Dengan Postman, saya bisa dengan mudah mengirim permintaan HTTP ke API yang menangani daftar subscriber, mengelola notifikasi, dan memastikan bahwa setiap permintaan dikirim serta diterima dengan benar oleh server.
+
+Salah satu fitur Postman yang sangat membantu adalah Collections, di mana saya bisa menyimpan dan mengelompokkan berbagai permintaan yang terkait dengan subscriber dan notification dalam satu tempat. Misalnya, saya bisa memiliki satu koleksi untuk API yang menambahkan subscriber, satu untuk menghapusnya, dan satu lagi untuk mengirim notifikasi ke semua subscriber. Ini sangat membantu agar pengujian tetap terorganisir.
+
+Selain itu, fitur Environment Variables sangat berguna dalam proyek ini. Saya bisa menyimpan token autentikasi dan URL API yang berbeda untuk staging maupun production, sehingga saya tidak perlu mengubahnya secara manual setiap kali melakukan pengujian. Fitur Automated Testing juga bermanfaat karena memungkinkan saya menulis skrip uji sederhana untuk memverifikasi apakah data yang dikembalikan dari API sudah sesuai ekspektasi.
+
+Secara keseluruhan, Postman sangat membantu dalam proyek saya saat ini, terutama dalam menguji API yang berhubungan dengan subscriber dan notification. Ke depannya, saya juga melihat bahwa fitur-fitur seperti Monitoring dan Test Scripts bisa sangat berguna dalam proyek perangkat lunak yang lebih kompleks, terutama jika membutuhkan pengujian otomatis dan pemantauan API secara real-time.
+
 
 #### Reflection Publisher-3
 
